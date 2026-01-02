@@ -99,7 +99,21 @@ def api_requests():
     conn.close()
     return jsonify([dict(row) for row in rows])
 
+@app.route("/delete/<int:id>", methods=["POST"])
+def delete_request(id):
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    conn = get_db()
+    conn.execute("DELETE FROM requests WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/dashboard")
+
+
 # ---------------- RUN APP ----------------
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=5000)
+
